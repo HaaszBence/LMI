@@ -12,7 +12,7 @@ Base.metadata.create_all(bind=engine)
 
 app = FastAPI(
     title="LetsMakeIt",
-    description="Full-stack modular suite project."
+    description="Full-stack project."
 )
 
 app.include_router(user.router)
