@@ -1,0 +1,19 @@
+services:
+  backend:
+    build: .
+    volumes:
+      - ./data:/app/data
+    environment:
+      - SQLALCHEMY_DATABASE_URL=sqlite:///./data/sql_app.db
+    ports:
+      - "8000:8000"
+
+  frontend:
+    image: nginx:alpine
+    volumes:
+      - ./static:/usr/share/nginx/html
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
