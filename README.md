@@ -12,11 +12,14 @@ A modular full-stack portal i'm building to figure out how to use FastAPI and SQ
 - **Infrastructure**: Docker and Nginx. This was a kick in the nut to set up but it's worth it.
 
 ## How to run it
-with docker:
+I made a `run.sh` script because I'm lazy and can't be bothered to type long docker commands.
+
 ```bash
-docker-compose up --build
+./run.sh up      # starts everything
+./run.sh logs    # shows the backend screaming
+./run.sh down    # kills it
 ```
-otherwise, `uv sync` and `python app/main.py` works too.
+Otherwise, standard `uv sync` and `python app/main.py` works too.
 
 ## Lessons Learned
 - **Circular Imports**: ran into a wall with user/comment relationships. fixed it using `TYPE_CHECKING` and forward refs in pydantic.
