@@ -2,17 +2,22 @@ from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 import uvicorn
+
+from dotenv import load_dotenv
+load_dotenv()
+
 from app.database import engine, Base
 from app.routes import comment, user
-
 from app.schemas.root import Root
+from app.config import settings
 
 # Create database tables
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI(
-    title="LetsMakeIt",
-    description="Full-stack project."
+    title=settings.project_name,
+    description=settings.project_description,
+    debug=settings.debug if hasattr(settings, "debug") else False
 )
 
 app.include_router(user.router)
@@ -34,4 +39,4 @@ def get_tasker():
 
 
 if __name__ == "__main__":
-    uvicorn.run("app.main:app", host="127.0.0.1", port=8000, reload=True)
+    uvicorn.run("app.main:app", host="0.0.0.0", port=8000, reload=True)

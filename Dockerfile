@@ -1,4 +1,4 @@
-FROM python:3.12-slim
+FROM python:3.14-slim
 
 # Install uv
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
@@ -17,8 +17,11 @@ RUN uv sync --frozen --no-install-project
 # Copy the application
 COPY . .
 
+# Ensure data directory exists
+RUN mkdir -p /app/data
+
 # Expose the port
 EXPOSE 8000
 
-# Run the application
-CMD ["uv", "run", "uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+# Run the application using python module syntax
+CMD ["uv", "run", "python", "-m", "app.main"]

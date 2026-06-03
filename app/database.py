@@ -2,9 +2,14 @@ import os
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, DeclarativeBase
 
-# Use /app/data for Docker, or local root for development
-DATABASE_DIR = "/app/data" if os.path.exists("/app/data") else "."
-SQLALCHEMY_DATABASE_URL = f"sqlite:///{DATABASE_DIR}/sql_app.db"
+from app.config import settings
+
+# Prioritize environment variable, then fall back to directory detection
+SQLALCHEMY_DATABASE_URL = os.getenv(
+    "SQLALCHEMY_DATABASE_URL",
+    settings.sqlalchemy_database_url
+)
+
 
 engine = create_engine(
     SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False}
