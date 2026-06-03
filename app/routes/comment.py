@@ -4,8 +4,9 @@ from typing import List
 
 from app.database import get_db
 from app.schemas.comment import Comment, CommentCreate
+from app.schemas.user import User as UserSchema
 from app.crud import comment as crud_comment
-from app.crud import user as crud_user
+from app.auth import get_current_user
 
 router = APIRouter(prefix="/comment", tags=["comment"])
 
@@ -14,8 +15,11 @@ def read_comments(user_id: int = None, skip: int = 0, limit: int = 100, db: Sess
     return crud_comment.get_comments(db, user_id=user_id, skip=skip, limit=limit)
 
 @router.post("/", response_model=Comment)
-def create_comment(comment: CommentCreate, db: Session = Depends(get_db)):
-    db_user = crud_user.get_user(db, user_id=comment.user_id)
-    if not db_user:
-        raise HTTPException(status_code=404, detail="User not found. Cannot post comment.")
+def create_comment(
+    comment: CommentCreate, 
+    db: Session = Depends(get_db),
+    current_user: UserSchema = Depends(get_current_user)
+):
+    # Override user_id from the authenticated user
+    comment.user_id = current_user.id
     return crud_comment.create_comment(db=db, comment=comment)

@@ -4,6 +4,8 @@ const UI = {
         const userSelect = document.getElementById('userSelect');
         const filterUser = document.getElementById('filterUser');
         
+        if (!userSelect) return; // In case user is not logged in
+
         const userOptions = users.map(user => 
             `<option value="${user.id}">${user.name} (${user.email})</option>`
         ).join('');
@@ -31,34 +33,54 @@ const UI = {
                 <p class="text-gray-800 leading-relaxed">${c.content}</p>
             </div>
         `).join('');
+    },
+
+    checkAuth() {
+        const token = localStorage.getItem('lmi_token');
+        const postSection = document.getElementById('postSection');
+        const loginNotice = document.getElementById('loginNotice');
+
+        if (token) {
+            postSection.classList.remove('hidden');
+            loginNotice.classList.add('hidden');
+        } else {
+            postSection.classList.add('hidden');
+            loginNotice.classList.remove('hidden');
+        }
     }
 };
 
 // Global actions called from HTML
 async function loadDashboard() {
+    UI.checkAuth();
     const users = await API.getUsers();
     UI.renderUsers(users);
     refreshComments();
 }
 
 async function refreshComments() {
-    const userId = document.getElementById('filterUser').value;
+    const filterUser = document.getElementById('filterUser');
+    const userId = filterUser ? filterUser.value : null;
     const comments = await API.getComments(userId);
     UI.renderComments(comments);
 }
 
 async function handlePostComment() {
-    const userId = document.getElementById('userSelect').value;
+    const token = localStorage.getItem('lmi_token');
+    if (!token) return alert("You must be logged in to post.");
+
     const content = document.getElementById('commentContent').value;
 
-    if (!userId || !content) return alert("Please select a user and enter a comment.");
+    if (!content) return alert("Please enter a comment.");
 
-    const success = await API.postComment(userId, content);
+    // The backend now gets the userId from the token, 
+    // so we pass 0 or null as placeholder
+    const success = await API.postComment(0, content);
     if (success) {
         document.getElementById('commentContent').value = '';
         refreshComments();
     } else {
-        alert("Failed to post comment.");
+        alert("Failed to post comment. Session might be expired.");
     }
 }
 

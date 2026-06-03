@@ -10,3 +10,4 @@ ENV/
 *.sqlite3
 *.log
 .DS_Store
+lmi_deploy_key*

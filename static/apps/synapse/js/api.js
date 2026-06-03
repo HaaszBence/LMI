@@ -18,9 +18,13 @@ const API = {
     },
 
     async postComment(userId, content) {
+        const token = localStorage.getItem('lmi_token');
+        const headers = { 'Content-Type': 'application/json' };
+        if (token) headers['Authorization'] = `Bearer ${token}`;
+
         const res = await fetch(`${API_BASE_URL}/comment/`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: headers,
             body: JSON.stringify({ user_id: parseInt(userId), content })
         });
         return res.ok;

@@ -13,13 +13,19 @@
             <p class="text-gray-600 font-medium">The social backbone for modern platforms.</p>
         </header>
 
+        <!-- Login Notice -->
+        <div id="loginNotice" class="bg-orange-50 border border-orange-100 rounded-xl p-6 mb-8 text-center hidden">
+            <p class="text-orange-700 font-semibold">You must be logged in to join the conversation.</p>
+            <a href="/apps/auth/" class="mt-3 inline-block bg-orange-600 text-white px-6 py-2 rounded-lg hover:bg-orange-700 transition">Login / Register</a>
+        </div>
+
         <!-- Post Comment Form -->
-        <section class="bg-white rounded-xl shadow-sm p-6 mb-8 border border-gray-100">
+        <section id="postSection" class="bg-white rounded-xl shadow-sm p-6 mb-8 border border-gray-100 hidden">
             <h2 class="text-lg font-semibold mb-4 text-gray-800">Post a new comment</h2>
             <div class="space-y-4">
-                <div>
+                <div class="hidden">
                     <label class="block text-sm font-medium text-gray-700 mb-1">Select User</label>
-                    <select id="userSelect" class="w-full rounded-lg border-gray-200 bg-gray-50 p-2.5 text-sm focus:ring-blue-500 focus:border-blue-500 border"></select>
+                    <select id="userSelect" class="w-full rounded-lg border-gray-200 bg-gray-50 p-2.5 text-sm border"></select>
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Your Comment</label>
