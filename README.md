@@ -1,8 +1,9 @@
 # LetsMakeIt
-
+---
 A modular full-stack portal i'm building to figure out how to use FastAPI and SQLAlchemy. The goal is to have a solid "hub" with different apps without the code turning into spaghetti. yummi
 
 ## What's in here?
+---
 - **Synapse**: a comment wall thingy. 
 - **Tasker**: task manager so i don't forget to do groceries.
 
@@ -11,7 +12,8 @@ A modular full-stack portal i'm building to figure out how to use FastAPI and SQ
 - **Frontend**: Vanilla JS and Tailwind. No idea how ts works. This whole thing is an ai slop. Also fuck frontend "devs"
 - **Infrastructure**: Docker and Nginx. This was a kick in the nut to set up but it's worth it.
 
-## How to run it
+## How to run
+---
 I made a `run.sh` script because I'm lazy and can't be bothered to type long docker commands.
 
 ```bash
@@ -22,5 +24,21 @@ I made a `run.sh` script because I'm lazy and can't be bothered to type long doc
 Otherwise, standard `uv sync` and `python app/main.py` works too.
 
 ## Lessons Learned
+---
 - **Circular Imports**: ran into a wall with user/comment relationships. fixed it using `TYPE_CHECKING` and forward refs in pydantic.
 - **Project Structure**: was a real pain to figure out.
+
+## Infrastructure
+---
+```mermaid
+flowchart LR
+	A[Client--portal.lets-make-it.hu]
+	B[Cloudflare]
+	C[Homelab -- reverse-proxy]
+	D[Static file server]
+	E[API gateway]
+	F[Database]
+	A --> B
+	B --> C
+	C --> D & E & F
+```

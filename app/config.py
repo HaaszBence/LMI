@@ -4,6 +4,7 @@ class APISettings(BaseSettings):
     debug: bool = False
     project_name: str = "LetsMakeIt"
     project_description: str = "Full-stack project."
+    allowed_origins: str = "*"
 
     model_config = SettingsConfigDict(
         env_file=".env",

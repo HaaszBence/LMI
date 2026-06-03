@@ -12,7 +12,7 @@
 ## Architecture
 - **Structure:** Modular "hub" design. Apps are in `static/apps/`.
 - **Backend Flow:** `app/main.py` -> `app/routes/` -> `app/crud/` -> `app/models/`.
-- **Database:** SQLite. Database file location is environment-dependent: `/app/data/sql_app.db` in Docker, local root otherwise.
+- **Database:** PostgreSQL (v17). Database runs as a container service named `db`.
 - **Table Creation:** `Base.metadata.create_all` is called directly in `app/main.py` on startup. No migrations tool (Alembic) detected.
 
 ## Patterns & Constraints

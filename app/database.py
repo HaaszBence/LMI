@@ -7,7 +7,14 @@ from app.config import settings
 # Prioritize environment variable, then fall back to directory detection
 SQLALCHEMY_DATABASE_URL = os.getenv(
     "SQLALCHEMY_DATABASE_URL",
-    settings.sqlalchemy_database_url
+    f"sqlite:///{'/app/data' if os.path.exists('/app/data') else '.'}/sql_app.db"
+)
+
+# SQLite requires different connect_args than PostgreSQL
+connect_args = {"check_same_thread": False} if SQLALCHEMY_DATABASE_URL.startswith("sqlite") else {}
+
+engine = create_engine(
+    SQLALCHEMY_DATABASE_URL, connect_args=connect_args
 )
 
 
