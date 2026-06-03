@@ -1,6 +1,6 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 
@@ -33,23 +33,24 @@ app.include_router(auth.router)
 app.include_router(user.router)
 app.include_router(comment.router)
 
-app.mount("/static", StaticFiles(directory="static"), name="static")
-
+# Only mount static files if we are not on the API subdomain
 @app.get("/")
-def get_root():
+async def get_root(request: Request):
+    host = request.headers.get("host", "")
+    if "api." in host:
+        return JSONResponse({"status": "alive", "message": "LMI API is running. Use /docs for documentation."})
     return FileResponse("static/index.html")
 
-@app.get("/apps/synapse/")
-def get_synapse():
-    return FileResponse("static/apps/synapse/index.html")
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
-@app.get("/apps/tasker/")
-def get_tasker():
-    return FileResponse("static/apps/tasker/index.html")
-
-@app.get("/apps/auth/")
-def get_auth():
-    return FileResponse("static/apps/auth/index.html")
+@app.get("/apps/{app_name}/")
+async def get_app_file(app_name: str, request: Request):
+    host = request.headers.get("host", "")
+    if "api." in host:
+         return JSONResponse({"error": "Not Found"}, status_code=404)
+    
+    file_path = f"static/apps/{app_name}/index.html"
+    return FileResponse(file_path)
 
 
 if __name__ == "__main__":
