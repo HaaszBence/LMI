@@ -1,12 +1,41 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi.security import OAuth2PasswordBearer
+from jose import JWTError, jwt
 from sqlalchemy.orm import Session
 from typing import List
 
 from app.database import get_db
-from app.schemas.user import User, UserCreate
+from app.schemas.user import User, UserCreate, TokenData
 from app.crud import user as crud_user
+from app.config import settings
+from app.auth import ALGORITHM
 
 router = APIRouter(prefix="/user", tags=["user"])
+
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
+
+async def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
+    credentials_exception = HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Could not validate credentials",
+        headers={"WWW-Authenticate": "Bearer"},
+    )
+    try:
+        payload = jwt.decode(token, settings.secret_key, algorithms=[ALGORITHM])
+        email: str = payload.get("sub")
+        if email is None:
+            raise credentials_exception
+        token_data = TokenData(email=email)
+    except JWTError:
+        raise credentials_exception
+    user = crud_user.get_user_by_email(db, email=token_data.email)
+    if user is None:
+        raise credentials_exception
+    return user
+
+@router.get("/me", response_model=User)
+async def read_users_me(current_user: User = Depends(get_current_user)):
+    return current_user
 
 @router.get("/", response_model=List[User])
 def read_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
