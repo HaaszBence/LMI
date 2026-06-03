@@ -6,7 +6,7 @@ if TYPE_CHECKING:
     from .user import UserBase
 
 class CommentBase(BaseModel):
-    content: str = Field(examples=["Example comment"])
+    content: str = Field(max_length=200, examples=["Example comment"])
     user_id: int = Field(examples=[1])
 
 class CommentCreate(CommentBase):

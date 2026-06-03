@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
+from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 
 from dotenv import load_dotenv
@@ -18,6 +19,13 @@ app = FastAPI(
     title=settings.project_name,
     description=settings.project_description,
     debug=settings.debug if hasattr(settings, "debug") else False
+)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 app.include_router(user.router)

@@ -1,8 +1,8 @@
 from pydantic import BaseModel, Field, EmailStr
 
 class UserBase(BaseModel):
-    name: str = Field(examples=["Alice Smith"])
-    email: EmailStr = Field(examples=["alice@example.com"])
+    name: str = Field(max_length=50, examples=["Alice Smith"])
+    email: EmailStr = Field(max_length=100, examples=["alice@example.com"])
 
 class UserCreate(UserBase):
     pass
