@@ -1,3 +1,4 @@
+from datetime import datetime, timedelta, timezone
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
@@ -5,7 +6,6 @@ import bcrypt
 from sqlalchemy.orm import Session
 from app.database import get_db
 from app.config import settings
-from app.crud import user as crud_user
 from app.schemas.user import TokenData
 
 ALGORITHM = "HS256"
@@ -13,6 +13,7 @@ ALGORITHM = "HS256"
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 
 async def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
+    from app.crud import user as crud_user
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
